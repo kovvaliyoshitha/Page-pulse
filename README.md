@@ -3,7 +3,7 @@
 A small tool that audits any URL: fetches the page and reports HTTP status,
 response time, title, meta description, H1 count, image alt-text coverage,
 and an approximate word count. Built with a plain Express backend and a
-single static HTML/JS frontend — no build step, no framework overhead.
+single static HTML/JS frontend no build step, no framework overhead.
 
 ## Setup
 
@@ -13,7 +13,7 @@ npm start        # serves the app on http://localhost:3000
 npm test         # runs the test suite
 ```
 
-Requires Node 18+ (uses the built-in global `fetch` and `AbortController` —
+Requires Node 18+ (uses the built-in global `fetch` and `AbortController`
 no `node-fetch` dependency needed).
 
 ## API contract
@@ -39,7 +39,7 @@ Success response — `200 OK`:
 }
 ```
 
-Error responses — all return `{ "error": "<code>", "message": "<human-readable>" }`:
+Error responses all return `{ "error": "<code>", "message": "<human-readable>" }`:
 
 | Status | error code           | When |
 |--------|----------------------|------|
@@ -50,7 +50,7 @@ Error responses — all return `{ "error": "<code>", "message": "<human-readable
 | 504    | `timeout`            | No response within 8 seconds |
 | 500    | `parse_failed`       | Fetched successfully but the HTML couldn't be parsed |
 
-The server never throws an uncaught exception for a bad target URL — every
+The server never throws an uncaught exception for a bad target URL every
 failure path returns a structured JSON error instead of crashing the process.
 
 ## Design decisions
@@ -58,14 +58,14 @@ failure path returns a structured JSON error instead of crashing the process.
 **1. Validate the URL before touching the network, not after.**
 `isValidUrl()` runs first and rejects anything that isn't a well-formed
 `http(s)` URL with a `400` immediately. This keeps "user typo" cheap and
-distinct from "the target server is unreachable" — the two failure modes
+distinct from "the target server is unreachable" the two failure modes
 have very different meanings and shouldn't share a status code or message.
 
 **2. A hard timeout via `AbortController`, not a `Promise.race`.**
 A dead or slow server can hang a request indefinitely. Using `fetch`'s own
 `signal` to abort the underlying connection (rather than racing a timer
 against the fetch promise) actually tears down the socket instead of just
-abandoning the promise while the connection stays open in the background —
+abandoning the promise while the connection stays open in the background
 cleaner for a tool that might get hit with many concurrent audits.
 
 **3. Content-type check happens before reading/parsing the body.**
@@ -89,11 +89,11 @@ test file, and to sanity-check the timeout/abort approach against
 alternatives. The error-handling design (which failure gets which status
 code, checking content-type before parsing) and the self-critique above are
 my own calls, made after trying a version that parsed first and handled
-errors as an afterthought — that version's error messages were much less
+errors as an afterthought, that version's error messages were much less
 useful, which is what pushed me toward validating in the order shown above.
 
 ## Not included here
 
-Deploying this (Render/Railway/Vercel/etc.), pushing it to a public GitHub
+Deploying this Render, pushing it to a public GitHub
 repo, and recording a walkthrough are steps you'd do yourself outside this
-codebase — I can't create live deployments or video recordings.
+codebase. I can't create live deployments or video recordings.
