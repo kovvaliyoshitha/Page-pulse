@@ -5,6 +5,7 @@ response time, title, meta description, H1 count, image alt-text coverage,
 and an approximate word count. Built with a plain Express backend and a
 single static HTML/JS frontend no build step, no framework overhead.
 
+Live demo: https://page-pulse.bonto.run/
 ## Setup
 
 ```bash
